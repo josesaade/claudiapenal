@@ -533,7 +533,7 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
         <div style="font-size:12px;font-weight:600;margin-bottom:8px">¿Cómo usar?</div>
         <div style="font-size:11px;color:var(--mut);line-height:1.8">
           1. En Emma → <strong style="color:var(--txt)">Informes → Informe integral de consultas</strong> → Exportar Excel<br>
-          2. Sube el archivo aquí — Claudia filtra solo los casos de <strong style="color:var(--acc)">COMERCIAL</strong><br>
+          2. Sube el archivo aquí — Claudia filtra solo los casos de <strong style="color:var(--acc)">PENAL</strong><br>
           3. Revisa la lista de casos nuevos y confirmados<br>
           4. Haz clic en <strong style="color:var(--grn)">Importar seleccionados</strong>
         </div>
@@ -1036,7 +1036,7 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
 <script>
 // ══════════════════════════════════════════
 const USERS=[
-  {id:'jose',   name:'🦧 Juan Manuel Sandoval', role:'Coordinador', color:'#10b981', ini:'JM', active:true},
+  {id:'jose',   name:'Juan Manuel Sandoval 🦧', role:'Coordinador', color:'#10b981', ini:'JM', active:true},
   {id:'brayan', name:'Brayan Benavides',     role:'Líder',       color:'#3d8eff', ini:'BB', active:true},
   {id:'camilo', name:'Jose Camilo',          role:'Líder',       color:'#f0a500', ini:'JC', active:true},
   {id:'mariana',name:'Mariana Estrada',      role:'Líder',       color:'#f06292', ini:'ME', active:true},
@@ -1175,7 +1175,7 @@ async function loadDirectorio(){
         programa:d.programa||'Presencial',
         consultorio:d.consultorio||'',
         profesor:d.profesor||'Jose Saade',
-        periodo:d.periodo||'2026-2'
+        periodo:d.periodo||periodoActual()
       }));
       console.log(`Directorio cargado desde Supabase: ${DIRECTORIO.length} estudiantes`);
     }
@@ -1285,7 +1285,7 @@ Me dirijo a usted en relación con el caso identificado con el radicado ${r}. Ha
 Le solicitamos atentamente que, a más tardar el día ${getNextFechaTxt()}, nos brinde una respuesta clara sobre la gestión del caso. En caso de no recibir comunicación en el plazo indicado, se interpretará su silencio como un abandono del caso, lo cual constituye causal de pérdida del Consultorio que actualmente cursa.
 
 Saludos cordiales,
-JOSE SAADE
+JUAN MANUEL SANDOVAL
 Área Penal`,
 
   espera_resp_2:(r,n)=>
@@ -1296,7 +1296,7 @@ Nos permitimos realizar un segundo y último llamado de atención respecto al ca
 Le reiteramos que, a más tardar el día ${getNextFechaTxt()}, debe remitir una respuesta clara sobre la gestión del caso. La falta de cumplimiento en este plazo será interpretada como abandono del caso, lo cual constituye causal directa para la pérdida del Consultorio que actualmente cursa.
 
 Saludos cordiales,
-JOSE SAADE
+JUAN MANUEL SANDOVAL
 Área Penal`,
 
   espera_doc_1:(r,n)=>
@@ -1307,8 +1307,8 @@ Me dirijo a usted con respecto a la falta de actualización en el caso identific
 Le solicitamos que a más tardar el día ${getNextFechaTxt()} nos comunique la solución debidamente diligenciada respecto a dicho radicado, caso contrario su actitud se interpretará como un abandono de caso lo cual es causal para la pérdida del Consultorio que se encuentra cursando.
 
 Saludos cordiales,
-JOSE SAADE
-ÁREA COMERCIAL`,
+JUAN MANUEL SANDOVAL
+Área Penal`,
 
   espera_doc_2:(r,n)=>
 `Buenas tardes, estimado(a) ${n}:
@@ -1320,7 +1320,7 @@ Esta omisión afecta no solo su proceso de formación, sino también el correcto
 Le solicitamos que, a más tardar el día ${getNextFechaTxt()}, remita la solución debidamente diligenciada respecto a dicho radicado. De no recibir respuesta dentro del plazo establecido, se interpretará como un abandono del caso, lo cual constituye causal directa de pérdida del Consultorio que actualmente cursa.
 
 Saludos cordiales,
-JOSE SAADE
+JUAN MANUEL SANDOVAL
 Área Penal`,
 
   permiso:(r,n)=>
@@ -1335,7 +1335,7 @@ Para realizar las correcciones necesarias en el documento adjunto del radicado $
 5. Haz clic en "Compartir" para enviar el documento con permiso de edición.
 
 Atentamente,
-José Saade · Área Penal`,
+Juan Manuel Sandoval · Área Penal`,
 
 
 
@@ -1351,7 +1351,7 @@ Lamentamos informarle que su falta de compromiso ha tenido un impacto negativo t
 Es imperativo asumir estas obligaciones con la seriedad y diligencia que exige el ejercicio profesional del Derecho.
 
 Saludos cordiales,
-JOSE SAADE
+JUAN MANUEL SANDOVAL
 Área Penal`,
 
   reasignacion_nuevo:(r,n)=>
@@ -1366,7 +1366,7 @@ Es importante que inicie la gestión a la brevedad posible, ya que el caso requi
 Quedamos atentos a cualquier inquietud.
 
 Saludos cordiales,
-JOSE SAADE
+JUAN MANUEL SANDOVAL
 Área Penal`,
 
   info_usu_1:(r,n)=>
@@ -1379,7 +1379,7 @@ En caso de que no hayas recibido respuesta, te solicito por favor que le escriba
 Quedo atento a tu confirmación.
 
 Saludos cordiales,
-JOSE SAADE
+JUAN MANUEL SANDOVAL
 Área Penal`,
 
   info_usu_2:(r,n)=>
@@ -1390,7 +1390,7 @@ Este es un segundo y último aviso respecto al caso con radicado ${r}. A la fech
 Señor(a) ${n}, por favor necesito ese dato para avanzar en su caso. Si no me lo suministra a más tardar el día ${getNextFechaTxt()}, entenderé que está desistiendo del caso, lo cual tendrá consecuencias para su proceso en el Consultorio Jurídico.
 
 Saludos cordiales,
-JOSE SAADE
+JUAN MANUEL SANDOVAL
 Área Penal`,
 
   aprobado_doc:(r,n)=>
@@ -1413,7 +1413,7 @@ Encuesta de satisfacción: https://forms.office.com/Pages/ResponsePage.aspx?id=z
 Después de tener estos documentos cargados en Emma deberá avisarnos por este medio para su cierre.
 
 Saludos,
-JOSE SAADE · Área Penal`,
+JUAN MANUEL SANDOVAL · Área Penal`,
 
   notificacion:(r,n)=>
 `Buenos días, estimado(a) ${n}.
@@ -1425,7 +1425,7 @@ Una vez recibido el aval del área, se te enviará el formato correspondiente pa
 Antes de recibir indicaciones del área no debes elaborar ningún documento.
 
 Saludos cordiales,
-JOSE SAADE · Área Penal`,
+JUAN MANUEL SANDOVAL · Área Penal`,
 
   cargue_emma:(r,n)=>
 `Estimado(a) ${n}:
@@ -1435,7 +1435,7 @@ Nos permitimos hacer un llamado de atención respecto al caso identificado con e
 Quedo atento al cargue de estos.
 
 Saludos cordiales,
-JOSE SAADE · Área Penal`,
+JUAN MANUEL SANDOVAL · Área Penal`,
 };
 
 // ══════════════════════════════════════════
@@ -1505,6 +1505,15 @@ const localSaved=new Map(); // caseId → timestamp de última escritura local
 const SUPA_URL='https://kyoojrfdewgoprylazah.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5b29qcmZkZXdnb3ByeWxhemFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MjcyNjYsImV4cCI6MjA5NDEwMzI2Nn0.H6Xdff_x-zywytbmepSTnD87gVJfQrWUUUSUGPGr6tI';
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+// ── Área de esta Claudia ──
+const AREA_DEFAULT='PENAL';
+const AREAS_APP=['PENAL'];
+function areaFilter(q){return AREAS_APP.length===1?q.eq('area',AREAS_APP[0]):q.in('area',AREAS_APP);}
+function areaDeCaso(id){const c=(typeof cases!=='undefined')?cases.find(x=>x.id===id):null;return (c&&c.area)||AREA_DEFAULT;}
+function periodoActual(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()<6?1:2);}
+function asegurarPeriodos(){['a-per','edit-per','nest-periodo'].forEach(id=>{const s=document.getElementById(id);const p=periodoActual();if(s&&![...s.options].some(o=>o.value===p))s.insertBefore(new Option(p,p),s.firstChild);});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',asegurarPeriodos);else asegurarPeriodos();
+
 
 // ── Casos ──
 async function loadC(){
@@ -1529,7 +1538,7 @@ async function loadC(){
       return {
         id:r.id, estudiante, lider:r.lider||'', solucion:r.solucion||'',
         subestado:r.subestado||'Esperando notificación por Teams', fecha:r.fecha||'',
-        periodo:r.periodo||'2026-2', correcciones:r.correcciones||0,
+        area:r.area||AREA_DEFAULT, periodo:r.periodo||periodoActual(), correcciones:r.correcciones||0,
         fechaUltimaAccion:r.fecha_ultima_accion||r.fecha||'',
         estado:r.estado||'ASIGNADA', usuario:r.usuario||''
       };
@@ -1554,10 +1563,10 @@ async function saveC(caseIdToSave){
   if(!c) return;
   localSaved.set(caseIdToSave, Date.now()); // proteger contra sync durante 15s
   const{error}=await sb.from('casos').upsert({
-    id:c.id, estudiante:c.estudiante, lider:c.lider||null, solucion:c.solucion,
-    subestado:c.subestado, fecha:c.fecha, periodo:c.periodo||'2026-1',
+    id:c.id, area:c.area||AREA_DEFAULT, estudiante:c.estudiante, lider:c.lider||null, solucion:c.solucion,
+    subestado:c.subestado, fecha:c.fecha, periodo:c.periodo||periodoActual(),
     correcciones:c.correcciones||0, fecha_ultima_accion:c.fechaUltimaAccion,
-    estado:c.estado||'ASIGNADA', usuario:c.usuario||'', area:'PENAL'
+    estado:c.estado||'ASIGNADA', usuario:c.usuario||''
   },{onConflict:'id'});
   if(error) console.error('saveC error:',error);
 }
@@ -1565,10 +1574,10 @@ async function saveC(caseIdToSave){
 // Guardar todos los casos (solo para sembrado inicial)
 async function saveCAll(list){
   const rows=(list||cases).map(c=>({
-    id:c.id, estudiante:c.estudiante, lider:c.lider||null, solucion:c.solucion,
-    subestado:c.subestado, fecha:c.fecha, periodo:c.periodo||'2026-1',
+    id:c.id, area:c.area||AREA_DEFAULT, estudiante:c.estudiante, lider:c.lider||null, solucion:c.solucion,
+    subestado:c.subestado, fecha:c.fecha, periodo:c.periodo||periodoActual(),
     correcciones:c.correcciones||0, fecha_ultima_accion:c.fechaUltimaAccion||c.fecha,
-    estado:c.estado||'ASIGNADA', usuario:c.usuario||'', area:'PENAL'
+    estado:c.estado||'ASIGNADA', usuario:c.usuario||''
   }));
   // Insertar en lotes de 50
   for(let i=0;i<rows.length;i+=50){
@@ -1578,7 +1587,7 @@ async function saveCAll(list){
 
 // ── Historial ──
 async function loadH(){
-  const{data}=await sb.from('historial').select('*').order('ts',{ascending:false}).limit(200);
+  const{data}=await areaFilter(sb.from('historial').select('*')).order('ts',{ascending:false}).limit(200);
   if(!data) return [];
   return data.map(r=>({id:r.id,ts:r.ts,user:r.usuario,caseId:r.case_id,estudiante:r.estudiante,accion:r.accion,subestado:r.subestado}));
 }
@@ -1587,14 +1596,14 @@ async function saveH(){
   if(!hist.length) return;
   const last=hist[0];
   await sb.from('historial').insert({
-    usuario:last.user, case_id:last.caseId, estudiante:last.estudiante,
+    area:areaDeCaso(last.caseId), usuario:last.user, case_id:last.caseId, estudiante:last.estudiante,
     accion:last.accion, subestado:last.subestado
   });
 }
 
 // ── Compromisos ──
 async function loadCompromisosDB(){
-  const{data}=await sb.from('compromisos').select('*').order('ts',{ascending:false});
+  const{data}=await areaFilter(sb.from('compromisos').select('*')).order('ts',{ascending:false});
   if(!data) return [];
   return data.map(r=>({id:r.id,rad:r.rad,est:r.est,tipo:r.tipo,fec:r.fec,motivo:r.motivo,resp:r.resp,por:r.por,ts:r.ts,_saved:true}));
 }
@@ -1798,8 +1807,7 @@ function checkAlerts(){
 function sw(name){
   document.querySelectorAll('.vc').forEach(v=>v.classList.remove('on'));
   document.getElementById('vc-'+name).classList.add('on');
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',
-    ['casos','todos','kanban','eisenhower','dashboard','historial','analitica','compromisos','checklist','importar','directorio','otras-areas','noticias'][i]===name));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',(t.getAttribute('onclick')||'').includes("sw('"+name+"')")));
   if(name==='todos') renderTodos();
   if(name==='kanban') renderKanban();
   if(name==='eisenhower') renderEisenhower();
@@ -2553,8 +2561,8 @@ async function reversarAccion(id){
     accion:`↩ Reversión: "${actual.accion}" → volvió a "${subAnterior}"`,
     subestado:subAnterior
   };
-  await sb.from('historial_casos').insert({
-    ts:entrada.ts, usuario:cu.name, case_id:id,
+  await sb.from('historial').insert({
+    area:areaDeCaso(id), ts:entrada.ts, usuario:cu.name, case_id:id,
     estudiante:c.estudiante,
     accion:entrada.accion,
     subestado:subAnterior
@@ -2600,7 +2608,7 @@ function procesarExcelEmma(file){
       const ws=wb.Sheets[wb.SheetNames[0]];
       const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
 
-      // 1. Filtrar solo COMERCIAL, excluir Rechazados y Centro Conciliación
+      // 1. Filtrar solo PENAL, excluir Rechazados y Centro Conciliación
       const ESTADOS_EXCLUIR=new Set(['Centro Conciliación','Rechazada','Rechazado','No tramitada','Desistida']);
       const ESTADOS_FINALIZADO_EMMA=new Set(['Finalizada','Centro Conciliación']);
 
@@ -2677,7 +2685,7 @@ function mostrarPreviewImport(total,n1,n2,n3){
   el.style.gap='12px';
   el.style.marginBottom='18px';
   el.innerHTML=`
-    <div class="sc"><div class="slabel">Comercial en Emma</div><div class="sval" style="color:var(--blu)">${total}</div><div class="ssub">Excl. Centro Conciliación</div></div>
+    <div class="sc"><div class="slabel">Penal en Emma</div><div class="sval" style="color:var(--blu)">${total}</div><div class="ssub">Excl. Centro Conciliación</div></div>
     <div class="sc"><div class="slabel">🔴 Finalizar en Claudia</div><div class="sval" style="color:var(--red)">${n1}</div><div class="ssub">Activos pero ya cerraron</div></div>
     <div class="sc"><div class="slabel">⚠️ Sin registrar</div><div class="sval" style="color:var(--gold)">${n2}</div><div class="ssub">Finalizados no en Claudia</div></div>
     <div class="sc"><div class="slabel">🆕 Casos nuevos</div><div class="sval" style="color:var(--grn)">${n3}</div><div class="ssub">En Emma pero no en Claudia</div></div>
@@ -2781,7 +2789,7 @@ async function importarSeleccionados(){
       const nuevoCase={
         id:r.rad, usuario:r.usuario, estudiante:nombreEst,
         lider:'', solucion:r.solucion||'Por definir', subestado,
-        fecha:r.fecha, periodo:'2026-1', correcciones:0,
+        fecha:r.fecha, periodo:periodoActual(), correcciones:0,
         fechaUltimaAccion:r.fecha, estado:'ASIGNADA'
       };
       cases.push(nuevoCase);
@@ -2832,7 +2840,7 @@ function openEdit(id){
   document.getElementById('edit-rad-title').textContent=c.id+' · '+c.solucion;
   document.getElementById('edit-usu').value=c.usuario||'';
   document.getElementById('edit-est').value=c.estudiante||'';
-  document.getElementById('edit-per').value=c.periodo||'2026-1';
+  document.getElementById('edit-per').value=c.periodo||periodoActual();
   document.getElementById('edit-fecha').value=c.fecha||'';
   document.getElementById('edit-rad-input').value=c.id||'';
   const solSel=document.getElementById('edit-sol');
@@ -3122,7 +3130,7 @@ async function saveComp(){
   const resp=document.getElementById('c-resp').value;
   const por=document.getElementById('c-por').value.trim();
   if(!rad||!est){showToast('⚠️ Radicado y estudiante son obligatorios');return;}
-  const{data,error}=await sb.from('compromisos').insert({rad,est,tipo,fec,motivo,resp,por}).select();
+  const{data,error}=await sb.from('compromisos').insert({area:areaDeCaso(rad),rad,est,tipo,fec,motivo,resp,por}).select();
   if(error){showToast('⚠️ Error guardando');return;}
   compromisos.unshift({id:data[0].id,rad,est,tipo,fec,motivo,resp,por,ts:new Date().toISOString(),_saved:true});
   cm('mod-comp');renderCompromisos();
@@ -3559,7 +3567,7 @@ Te envío el formato del área. Recuerda que debes mandar el documento con permi
 4. Envía el documento
 
 Quedo atento.
-JOSE SAADE · Área Penal`;
+JUAN MANUEL SANDOVAL · Área Penal`;
 
   const LABELS={
     dp:'el Derecho de Petición',
@@ -3710,9 +3718,7 @@ function openAdd(){
   document.getElementById('a-fec').value=new Date().toISOString().split('T')[0];
   document.getElementById('a-rad').value='';document.getElementById('a-est').value='';
   document.getElementById('a-usu').value='';
-  document.getElementById('a-per').value='2026-1';
-  document.getElementById('a-sa-subtipo-box').style.display='none';
-  document.getElementById('a-sa-subtipo').value='';
+  document.getElementById('a-per').value=periodoActual();
   document.getElementById('mod-add').classList.add('open');
 }
 
@@ -3738,6 +3744,8 @@ async function saveNew(){
     await marcarEmmaDocumentado(window._emmaAlertPendiente);
     window._emmaAlertPendiente=null;
   }
+  window._noticiaRegistrando=null;
+  if(typeof noticias!=='undefined'){noticias=noticias.filter(x=>x.id!==r);try{renderNoticias();}catch(e){}}
   cm('mod-add');renderAll();showToast('✅ Caso '+r+' registrado');
 }
 
@@ -4245,7 +4253,7 @@ function startRealtime(){
   syncInterval=setInterval(async()=>{
     try{
       // 1. Recargar todos los casos y detectar diferencias
-      const{data,error}=await sb.from('casos').select('*').eq('area','PENAL');
+      const{data,error}=await areaFilter(sb.from('casos').select('*')).neq('estado','NOTIFICADA');
       if(!error&&data){
         let cambiosOtros=0;
         data.forEach(r=>{
@@ -4267,7 +4275,7 @@ function startRealtime(){
                 subestado:rSub, lider:rLider,
                 solucion:rSol, correcciones:rCorr,
                 fechaUltimaAccion:r.fecha_ultima_accion||c.fechaUltimaAccion,
-                periodo:r.periodo||'2026-2', usuario:r.usuario||c.usuario||''
+                periodo:r.periodo||periodoActual(), usuario:r.usuario||c.usuario||''
               };
               if(rLider!==''&&r.usuario&&r.usuario!==cu.name) cambiosOtros++;
             }
@@ -4281,7 +4289,7 @@ function startRealtime(){
             cases.push({
               id:r.id, estudiante:estSync, lider:r.lider||'',
               solucion:r.solucion, subestado:r.subestado, fecha:r.fecha,
-              periodo:r.periodo||'2026-2', correcciones:r.correcciones||0,
+              area:r.area||AREA_DEFAULT, periodo:r.periodo||periodoActual(), correcciones:r.correcciones||0,
               fechaUltimaAccion:r.fecha_ultima_accion||r.fecha,
               estado:r.estado||'ASIGNADA', usuario:r.usuario||''
             });
@@ -4299,8 +4307,8 @@ function startRealtime(){
       }
 
       // 2. Verificar historial nuevo (los últimos 3)
-      const{data:hNew}=await sb.from('historial')
-        .select('*').order('id',{ascending:false}).limit(3);
+      const{data:hNew}=await areaFilter(sb.from('historial').select('*'))
+        .order('id',{ascending:false}).limit(3);
       if(hNew){
         let newH=0;
         hNew.forEach(r=>{
@@ -4475,7 +4483,7 @@ async function guardarNuevoEst(){
   const programa=document.getElementById('nest-prog').value;
   const consultorio=document.getElementById('nest-cons').value;
   const profesor=document.getElementById('nest-profesor').value.trim()||'Jose Saade';
-  const periodo=document.getElementById('nest-periodo').value||'2026-2';
+  const periodo=document.getElementById('nest-periodo').value||periodoActual();
   if(!nombre||!correo){showToast('⚠️ Nombre y correo son obligatorios');return;}
 
   if(nestEditIdx>=0){
@@ -4512,8 +4520,8 @@ async function eliminarEst(idx){
 function renderDirectorio(){
   const vc=document.getElementById('vc-directorio');
   // Detectar períodos disponibles
-  const periodos=[...new Set(DIRECTORIO.map(d=>d.periodo||'2026-1'))].sort().reverse();
-  const periodoSel=window._dirPeriodo||(periodos[0]||'2026-1');
+  const periodos=[...new Set(DIRECTORIO.map(d=>d.periodo||periodoActual()))].sort().reverse();
+  const periodoSel=window._dirPeriodo||(periodos[0]||periodoActual());
   window._dirPeriodo=periodoSel;
 
   // Montar shell la primera vez o cuando cambia la estructura
@@ -4550,17 +4558,17 @@ function renderDirectorio(){
 
   const q=(document.getElementById('dir-srch')?.value||'').toUpperCase().trim();
   // Filtrar por período seleccionado
-  let lista=DIRECTORIO.filter(d=>(d.periodo||'2026-1')===periodoSel);
+  let lista=DIRECTORIO.filter(d=>(d.periodo||periodoActual())===periodoSel);
   if(q) lista=lista.filter(d=>d.nombre.includes(q)||d.correo.toUpperCase().includes(q)||(d.programa||'').toUpperCase().includes(q));
   const sorted=[...lista].sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  const totalPer=DIRECTORIO.filter(d=>(d.periodo||'2026-1')===periodoSel);
+  const totalPer=DIRECTORIO.filter(d=>(d.periodo||periodoActual())===periodoSel);
   document.getElementById('dir-count').textContent=`${sorted.length} estudiante${sorted.length!==1?'s':''} en ${periodoSel} · ${totalPer.filter(d=>d.programa==='Virtual').length} virtual · ${totalPer.filter(d=>d.programa==='Presencial').length} presencial · Total en todos los períodos: ${DIRECTORIO.length}`;
   document.getElementById('dir-list').innerHTML=sorted.map((d)=>{
     const idx=DIRECTORIO.indexOf(d);
     const progColor=d.programa==='Virtual'?'var(--pur)':'var(--blu)';
     const usuario=d.usuario||_u(d.correo);
     const consLabel=d.consultorio?`<span style="font-size:10px;font-weight:600;color:var(--acc)">${d.consultorio}</span>`:`<span style="color:var(--bd)">—</span>`;
-    const perLabel=d.periodo||'2026-1';
+    const perLabel=d.periodo||periodoActual();
     const profLabel=d.profesor||'—';
     return `<div class="tr2" style="grid-template-columns:2fr 1.2fr 2fr 1fr 1fr 60px 80px">
       <span style="font-size:12px;font-weight:500">${d.nombre}</span>
@@ -4625,7 +4633,7 @@ function abrirModalNuevoEst(){
   document.getElementById('nest-prog').value='Presencial';
   document.getElementById('nest-cons').value='';
   document.getElementById('nest-profesor').value='Jose Saade';
-  document.getElementById('nest-periodo').value=window._dirPeriodo||'2026-1';
+  document.getElementById('nest-periodo').value=window._dirPeriodo||periodoActual();
   document.getElementById('mod-nuevo-est').style.display='flex';
 }
 
@@ -4641,36 +4649,8 @@ function editarEst(idx){
   document.getElementById('nest-prog').value=d.programa||'Presencial';
   document.getElementById('nest-cons').value=d.consultorio||'';
   document.getElementById('nest-profesor').value=d.profesor||'Jose Saade';
-  document.getElementById('nest-periodo').value=d.periodo||'2026-1';
+  document.getElementById('nest-periodo').value=d.periodo||periodoActual();
   document.getElementById('mod-nuevo-est').style.display='flex';
-}
-
-function guardarNuevoEst(){
-  const nombre=document.getElementById('nest-nombre').value.trim().toUpperCase();
-  const correo=document.getElementById('nest-correo').value.trim().toLowerCase();
-  const usuario=document.getElementById('nest-usuario').value.trim().toLowerCase()||_u(correo);
-  const programa=document.getElementById('nest-prog').value;
-  const consultorio=document.getElementById('nest-cons').value;
-  const profesor=document.getElementById('nest-profesor').value.trim()||'Jose Saade';
-  const periodo=document.getElementById('nest-periodo').value||'2026-1';
-  if(!nombre||!correo){showToast('⚠️ Nombre y correo son obligatorios');return;}
-  if(nestEditIdx>=0){
-    DIRECTORIO[nestEditIdx]={nombre,correo,usuario,programa,consultorio,profesor,periodo};
-  } else {
-    DIRECTORIO.push({nombre,correo,usuario,programa,consultorio,profesor,periodo});
-  }
-  saveDirectorio();
-  document.getElementById('mod-nuevo-est').style.display='none';
-  renderDirectorio();
-  showToast(nestEditIdx>=0?'✅ Estudiante actualizado':'✅ Estudiante agregado');
-}
-
-function eliminarEst(idx){
-  if(!confirm(`¿Eliminar a ${DIRECTORIO[idx].nombre}?`)) return;
-  DIRECTORIO.splice(idx,1);
-  saveDirectorio();
-  renderDirectorio();
-  showToast('🗑 Estudiante eliminado');
 }
 
 function importarDirectorio(input){
@@ -4736,7 +4716,7 @@ async function procesarFilasDirectorio(rows){
     const correo=(row['CORREO']||row['Correo']||row['EMAIL']||row['Email']||row['correo']||row['email']||'').toString().trim().toLowerCase();
     const programa=(row['PROGRAMA']||row['Programa']||row['programa']||'Presencial').toString().trim();
     const usuario=(row['USUARIO']||row['Usuario']||row['usuario']||row['USER']||'').toString().trim().toLowerCase()||correo.split('@')[0];
-    const periodo=window._dirPeriodo||'2026-2';
+    const periodo=window._dirPeriodo||periodoActual();
     if(!nombre||!correo||!correo.includes('@')) return;
     rows2.push({nombre,correo,usuario,programa:programa||'Presencial',consultorio:'',profesor:'Jose Saade',periodo});
     agregados++;
@@ -5024,7 +5004,7 @@ async function guardarNoticiasAreas(rows){
   if(!nuevos.length) return;
   const inserts=nuevos.map(r=>({
     id:r.rad,estudiante:r.usuario,lider:'',solucion:'Por definir',
-    subestado:'Sin asignar',fecha:r.fecha,periodo:'2026-2',
+    subestado:'Sin asignar',fecha:r.fecha,periodo:periodoActual(),
     estado:'NOTIFICADA',area:r.area,correcciones:0,usuario:r.usuario
   }));
   const{error}=await sb.from('casos').upsert(inserts,{onConflict:'id',ignoreDuplicates:true});
@@ -5074,7 +5054,7 @@ function registrarNoticia(id){
     document.getElementById('a-rad').value=n.id;
     document.getElementById('a-usu').value=n.estudiante||n.usuario||'';
     document.getElementById('a-est').value='';
-    document.getElementById('a-per').value=n.periodo||'2026-2';
+    document.getElementById('a-per').value=n.periodo||periodoActual();
     window._noticiaRegistrando=id;
   },50);
 }
