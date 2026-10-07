@@ -6,12 +6,13 @@
 <title>Claudia Penal</title>
 
 <!-- PWA / iOS -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#c8102e">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#10a85f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Claudia Penal">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="Claudia Penal">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -652,8 +653,6 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
     <div class="vc" id="vc-otras-areas"></div>
     <div class="vc" id="vc-proformas"></div>
 
-  </div><!-- /main -->
-</div><!-- /app -->
 
     <!-- ══ NOTICIAS DE CASOS ══ -->
     <div class="vc" id="vc-noticias">
@@ -662,12 +661,15 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
           <div class="stitle">🔔 Noticias de Casos</div>
           <div style="font-size:11px;color:var(--mut);margin-top:3px">Casos detectados en otras áreas al importar un informe Emma — pendientes de registro manual</div>
         </div>
-        <button class="btnadd" onclick="loadNoticias()" style="background:var(--acc)">🔄 Actualizar</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btnadd" onclick="loadNoticias()" style="background:var(--acc)">🔄 Actualizar</button><button class="btnout" onclick="descartarTodasNoticias()">🗑 Descartar todas</button></div>
       </div>
       <div id="noticias-list">
         <div class="empty"><div class="empty-icon">🔔</div><div class="empty-txt">Cargando noticias…</div></div>
       </div>
     </div>
+  </div><!-- /main -->
+</div><!-- /app -->
+
 
 <!-- ══ MODAL ACCIÓN ══ -->
 <div class="overlay" id="mod-accion">
@@ -1753,10 +1755,6 @@ async function doLogin(){
   renderLogin();
   syncThemeBtn();
   setTimeout(checkRecordatorios, 1500);
-  // Mostrar botón de notas
-  const nb=document.getElementById('notas-btn');
-  if(nb) nb.style.display='flex';
-  actualizarBadge();
   startRealtime();
   setTimeout(()=>{
     const txt=document.getElementById('sync-txt');
@@ -4247,8 +4245,6 @@ function startRealtime(){
   const txt=document.getElementById('sync-txt');
   if(dot) dot.style.background='#00c97a';
   if(txt) txt.textContent='En vivo';
-  startNotasRealtime();
-  loadNotas().then(()=>actualizarBadge());
 
   syncInterval=setInterval(async()=>{
     try{
@@ -5059,6 +5055,20 @@ function registrarNoticia(id){
   },50);
 }
 
+async function descartarTodasNoticias(){
+  if(!noticias.length){showToast('No hay noticias para descartar');return;}
+  if(!confirm('¿Descartar las '+noticias.length+' noticias? Se eliminarán del sistema y no se puede deshacer.')) return;
+  const ids=noticias.map(n=>n.id);
+  let error=null;
+  for(let i=0;i<ids.length&&!error;i+=100){
+    ({error}=await areaFilter(sb.from('casos').delete()).in('id',ids.slice(i,i+100)).eq('estado','NOTIFICADA'));
+  }
+  if(error){showToast('⚠️ Error al descartar: '+error.message);return;}
+  noticias=[];
+  renderNoticias();
+  showToast('✅ '+ids.length+' noticias descartadas');
+}
+
 async function descartarNoticia(id){
   if(!confirm('¿Descartar esta noticia? Se eliminará del sistema.')) return;
   const{error}=await sb.from('casos').delete().eq('id',id).eq('estado','NOTIFICADA');
@@ -5252,172 +5262,7 @@ function renderProformas(){
   loadEmmaAlerts();
 })();
 
-// ══════════════════════════════════════════
-//  PIZARRA DEL EQUIPO
-// ══════════════════════════════════════════
-let notasAbiertas=false;
-let notasCache=[];
-let _destSeleccionado='todos';
-
-function selDest(btn){
-  _destSeleccionado=btn.dataset.id;
-  document.querySelectorAll('.dest-chip').forEach(b=>{
-    const activo=b.dataset.id===_destSeleccionado;
-    b.style.background=activo?'var(--acc)':'var(--s3)';
-    b.style.color=activo?'#fff':'var(--txt)';
-    b.style.borderColor=activo?'var(--acc)':'var(--bd)';
-  });
-}
-
-async function loadNotas(){
-  try{
-    const{data}=await sb.from('notas_equipo').select('*').order('ts',{ascending:false}).limit(100);
-    notasCache=data||[];
-  }catch(e){notasCache=[];}
-}
-
-async function enviarNota(){
-  const txt=document.getElementById('nota-txt')?.value.trim();
-  if(!txt) return;
-  document.getElementById('nota-txt').value='';
-  await sb.from('notas_equipo').insert({
-    from_user:cu.id, dest:_destSeleccionado, texto:txt,
-    ts:new Date().toISOString(), visto_por:[]
-  });
-}
-
-async function resolverNota(id){
-  await sb.from('notas_equipo').update({visto_por:['resolved']}).eq('id',id);
-}
-
-async function marcarNotasVistas(){
-  const sinVer=notasCache.filter(n=>
-    (n.dest===cu?.id||n.dest==='todos')&&n.from_user!==cu?.id&&
-    !(Array.isArray(n.visto_por)&&(n.visto_por.includes(cu.id)||n.visto_por.includes('resolved')))
-  );
-  for(const n of sinVer){
-    const visto=Array.isArray(n.visto_por)?n.visto_por:[];
-    if(!visto.includes(cu.id))
-      await sb.from('notas_equipo').update({visto_por:[...visto,cu.id]}).eq('id',n.id);
-  }
-}
-
-function actualizarBadge(){
-  const sinVer=notasCache.filter(n=>
-    (n.dest===cu?.id||n.dest==='todos')&&n.from_user!==cu?.id&&
-    !(Array.isArray(n.visto_por)&&(n.visto_por.includes(cu.id)||n.visto_por.includes('resolved')))
-  ).length;
-  const badge=document.getElementById('notas-badge');
-  if(!badge) return;
-  badge.style.display=sinVer>0?'flex':'none';
-  badge.textContent=sinVer>9?'9+':sinVer;
-}
-
-function renderNotas(){
-  const el=document.getElementById('notas-list');
-  if(!el) return;
-  const visibles=notasCache.filter(n=>
-    n.dest==='todos'||n.dest===cu?.id||n.from_user===cu?.id
-  );
-  if(visibles.length===0){
-    el.innerHTML=`<div style="text-align:center;color:var(--mut);font-size:12px;padding:30px 0">📌 Sin notas pendientes</div>`;
-    actualizarBadge(); return;
-  }
-  // Separar pendientes y resueltas
-  const pendientes=visibles.filter(n=>!(Array.isArray(n.visto_por)&&n.visto_por.includes('resolved')));
-  const resueltas=visibles.filter(n=>Array.isArray(n.visto_por)&&n.visto_por.includes('resolved'));
-  const renderCard=(n)=>{
-    const u=gu(n.from_user);
-    const esPropia=n.from_user===cu?.id;
-    const destLabel=n.dest==='todos'?'@todos':`@${gu(n.dest).name.split(' ')[0]}`;
-    const fecha=new Date(n.ts).toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    const resuelta=Array.isArray(n.visto_por)&&n.visto_por.includes('resolved');
-    return `<div style="background:var(--s2);border:1px solid ${resuelta?'var(--bd)':'var(--bd)'};border-left:3px solid ${resuelta?'var(--mut)':u.color};border-radius:10px;padding:10px 12px;opacity:${resuelta?'0.5':'1'}">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
-        <div style="width:20px;height:20px;border-radius:50%;background:${u.color}20;color:${u.color};font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${u.ini}</div>
-        <span style="font-size:11px;font-weight:600;color:${u.color}">${u.name.split(' ')[0]}</span>
-        <span style="font-size:10px;color:var(--acc);font-weight:600">${destLabel}</span>
-        <span style="margin-left:auto;font-size:9px;color:var(--mut)">${fecha}</span>
-      </div>
-      <div style="font-size:12px;color:var(--txt);line-height:1.5;margin-bottom:${resuelta?'0':'8px'}">${n.texto}</div>
-      ${!resuelta?`<div style="display:flex;justify-content:flex-end">
-        <button onclick="resolverNota(${n.id})" style="font-size:10px;background:rgba(0,201,122,.12);color:var(--grn);border:1px solid rgba(0,201,122,.3);border-radius:6px;padding:3px 10px;cursor:pointer">✓ Listo</button>
-      </div>`:''}
-    </div>`;
-  };
-  el.innerHTML=(pendientes.length?pendientes.map(renderCard).join(''):'')
-    +(resueltas.length?`<div style="font-size:10px;color:var(--mut);margin-top:8px;margin-bottom:4px">Resueltas</div>`+resueltas.slice(0,3).map(renderCard).join(''):'');
-  actualizarBadge();
-}
-
-async function toggleNotas(){
-  notasAbiertas=!notasAbiertas;
-  document.getElementById('notas-panel').style.display=notasAbiertas?'flex':'none';
-  if(notasAbiertas){
-    await loadNotas();
-    renderNotas();
-    marcarNotasVistas();
-    setTimeout(()=>document.getElementById('nota-txt')?.focus(),100);
-  }
-}
-
-function startNotasRealtime(){
-  sb.channel('notas-equipo-rt')
-    .on('postgres_changes',{event:'*',schema:'public',table:'notas_equipo'},async(payload)=>{
-      await loadNotas();
-      if(payload.eventType==='INSERT'){
-        const n=payload.new;
-        if(n.from_user!==cu?.id&&(n.dest==='todos'||n.dest===cu?.id)){
-          const u=gu(n.from_user);
-          const destLabel=n.dest==='todos'?'@todos':`@${cu.name.split(' ')[0]}`;
-          showToast(`📌 ${u.name.split(' ')[0]} ${destLabel}: "${n.texto.slice(0,45)}${n.texto.length>45?'…':''}"`,5000);
-          if(!notasAbiertas){
-            document.getElementById('notas-panel').style.display='flex';
-            notasAbiertas=true;
-          }
-        }
-      }
-      if(notasAbiertas) renderNotas();
-      else actualizarBadge();
-    })
-    .subscribe();
-}
-
-// Revisar badge cada 60s como fallback
-setInterval(async()=>{if(cu){await loadNotas();actualizarBadge();}},60000);
 </script>
 
-<!-- ══ PIZARRA DEL EQUIPO ══ -->
-<button id="notas-btn" onclick="toggleNotas()" title="Pizarra del equipo" style="display:none;position:fixed;bottom:24px;right:24px;z-index:1000;width:48px;height:48px;border-radius:50%;background:var(--acc);color:#fff;border:none;cursor:pointer;font-size:20px;box-shadow:0 4px 16px rgba(200,16,46,.4);align-items:center;justify-content:center;transition:all .2s">
-  📌<span id="notas-badge" style="display:none;position:absolute;top:-2px;right:-2px;background:var(--gold);color:#000;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center"></span>
-</button>
-
-<div id="notas-panel" style="display:none;position:fixed;bottom:84px;right:24px;z-index:999;width:400px;max-height:560px;background:var(--s1);border:1px solid var(--bd);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.4);flex-direction:column;overflow:hidden">
-  <!-- Header -->
-  <div style="padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px">
-    <div style="flex:1;font-family:'Syne',sans-serif;font-weight:700;font-size:14px">📌 Pizarra del equipo</div>
-    <button onclick="toggleNotas()" style="background:none;border:none;color:var(--mut);cursor:pointer;font-size:18px;padding:0 4px">✕</button>
-  </div>
-  <!-- Tarjetas -->
-  <div id="notas-list" style="flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-height:160px"></div>
-  <!-- Componer -->
-  <div style="padding:10px 12px;border-top:1px solid var(--bd);background:var(--s2);border-radius:0 0 16px 16px">
-    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
-      <span style="font-size:12px;color:var(--mut);white-space:nowrap">@ Para:</span>
-      <div style="display:flex;gap:4px;flex-wrap:wrap" id="dest-chips">
-        <button class="dest-chip on" data-id="todos" onclick="selDest(this)" style="font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid var(--bd);background:var(--acc);color:#fff;cursor:pointer">Todos</button>
-        <button class="dest-chip" data-id="jose" onclick="selDest(this)" style="font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid var(--bd);background:var(--s3);color:var(--txt);cursor:pointer">Jose</button>
-        <button class="dest-chip" data-id="angie" onclick="selDest(this)" style="font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid var(--bd);background:var(--s3);color:var(--txt);cursor:pointer">Angie</button>
-        <button class="dest-chip" data-id="gabriela" onclick="selDest(this)" style="font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid var(--bd);background:var(--s3);color:var(--txt);cursor:pointer">Gabriela</button>
-        <button class="dest-chip" data-id="azhly" onclick="selDest(this)" style="font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid var(--bd);background:var(--s3);color:var(--txt);cursor:pointer">Azhly</button>
-        <button class="dest-chip" data-id="victor" onclick="selDest(this)" style="font-size:10px;padding:3px 9px;border-radius:12px;border:1px solid var(--bd);background:var(--s3);color:var(--txt);cursor:pointer">Victor</button>
-      </div>
-    </div>
-    <div style="display:flex;gap:6px">
-      <input class="fi" id="nota-txt" placeholder="Escribe una nota para el equipo…" style="flex:1;font-size:12px;padding:7px 10px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarNota();}">
-      <button class="btnsave" onclick="enviarNota()" style="padding:7px 14px;font-size:13px">📌</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
